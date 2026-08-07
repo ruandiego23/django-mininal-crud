@@ -1,6 +1,20 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
+
+from webdev.tasks.forms import TaskNewForm
+from webdev.tasks.models import Task
 
 
 # Create your views here.
 def home(request):
-    return render(request, 'tasks/base.html')
+    if request.method == 'POST':
+        form = TaskNewForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('tasks:home'))
+        else:
+            pending_tasks = Task.objects.filter(done=False).all()
+            return render(request, 'tasks/home.html', {'form': form, 'pending_tasks': pending_tasks}, status=400)
+    pending_tasks = Task.objects.filter(done=False).all()
+    return render(request, 'tasks/home.html', {'pending_tasks': pending_tasks})

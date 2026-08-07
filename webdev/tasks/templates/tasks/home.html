@@ -1,0 +1,45 @@
+{% extends 'tasks/base.html' %}
+{% load static %}
+
+
+{% block body %}
+
+    <div class="container mt-sm-5">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2">
+                <form action="{% url 'tasks:home' %}" method="POST">
+                    {% csrf_token %}
+                    <h1>Tasks</h1>
+                    <div class="input-group has-validation mb-sm-3">
+                        <input type="text" class="form-control" placeholder="Type your task here" name="name"
+                               aria-label="task" aria-describedby="button-addon2">
+                        <button class="btn btn-primary" type="submit" id="button-addon2">Save</button>
+                    </div>
+                    <div class="form-text" id="basic-addon4">{{ form.name.errors }}</div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-sm-3">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2">
+                <h2>Pending Tasks</h2>
+                {% for task in pending_tasks %}
+                    <form>
+                        <div class="input-group mb-sm-1">
+                            <div class="input-group-text">
+                                <input  class="form-check-input mt-0" type="radio" value=""
+                                       aria-label="Radio button for following text input">
+                            </div>
+                            <input name="name" type="text" class="form-control" aria-label="Text input with radio button"
+                            value="{{ task.name }}">
+                        </div>
+                    </form>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
