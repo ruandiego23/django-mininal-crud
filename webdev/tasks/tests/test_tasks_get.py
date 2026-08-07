@@ -38,3 +38,24 @@ def resp_with_pending_tasks(client: Client, list_of_pending_tasks):
 def test_list_of_pending_tasks(resp_with_pending_tasks, list_of_pending_tasks):
     for task in list_of_pending_tasks:
         assertContains(resp_with_pending_tasks, task.name)
+
+
+@pytest.fixture
+def list_of_done_tasks(db):
+    tarefas = [
+        Task(name='Task 1', done=True),
+        Task(name='Task 2', done=True),
+    ]
+    Task.objects.bulk_create(tarefas)
+    return tarefas
+
+
+@pytest.fixture
+def resp_with_done_tasks(client: Client, list_of_done_tasks):
+    response = client.get(reverse('tasks:home'))
+    return response
+
+
+def test_list_of_done_tasks(resp_with_done_tasks, list_of_done_tasks):
+    for task in list_of_done_tasks:
+        assertContains(resp_with_done_tasks, task.name)
