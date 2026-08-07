@@ -40,3 +40,9 @@ def detail(request, task_id):
         if form.is_valid():
             form.save()
     return HttpResponseRedirect(reverse('tasks:home'))
+
+
+def erase(request, task_id):
+    if request.method == 'POST':
+        Task.objects.filter(id=task_id).delete()
+    return HttpResponseRedirect(reverse('tasks:home'))
