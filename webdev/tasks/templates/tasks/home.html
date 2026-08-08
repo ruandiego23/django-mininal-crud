@@ -32,7 +32,7 @@
                             <div class="input-group has-validation mb-sm-3">
                                 <input type="text" class="form-control" placeholder="Type your task here" name="name"
                                        aria-label="task" required="required" value="{{ task.name }}">
-                                <input type="hidden" value="checked" name="done">
+                                <input type="hidden" name="task_status" value="complete">
                                 <button class="btn btn-success" type="submit">Mark as done</button>
                             </div>
                         </form>
@@ -47,32 +47,35 @@
             <div class="col-sm-8 offset-sm-2">
                 {% if done_tasks.exists %}
                     <h2>Tasks already done</h2>
-
                     {% for task in done_tasks %}
+                        <!-- 1. The Visual Layout (Input Group) -->
+                        <div class="input-group mb-sm-3">
+                            <!-- Linked to the update form -->
+                            <input type="text" class="form-control" placeholder="Type your task here" name="name"
+                                   aria-label="task" required="required" value="{{ task.name }}"
+                                   form="form-update-{{ task.id }}">
 
-                        <div class="row">
-                            <div class="col-sm-1">
-                                <form action="{% url 'tasks:erase' task_id=task.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" value="checked" name="deleted">
-                                    <button class="btn btn-danger" type="submit">Delete</button>
+                            <!-- Linked to the update form (First Button) -->
+                            <button class="btn btn-warning" type="submit" form="form-update-{{ task.id }}">Mark as not
+                                done
+                            </button>
 
-                                </form>
-                            </div>
-                            <div class="col-sm-11">
-                                <form action="{% url 'tasks:detail' task_id=task.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <div class="input-group mb-sm-3">
-                                        <input type="text" class="form-control" placeholder="Type your task here"
-                                               name="name"
-                                               aria-label="task" required="required" value="{{ task.name }}">
-                                        <input type="hidden" value="checked" name="not done">
-                                        <button class="btn btn-warning" type="submit">Mark as not done</button>
-                                    </div>
-                                </form>
-                            </div>
+                            <!-- Linked to the delete form (Second Button) -->
+                            <button class="btn btn-danger" type="submit" form="form-delete-{{ task.id }}">Delete
+                            </button>
                         </div>
 
+                        <!-- 2. The Logical Forms (Hidden from view) -->
+                        <form id="form-delete-{{ task.id }}" action="{% url 'tasks:erase' task_id=task.id %}"
+                              method="POST" class="d-none">
+                            {% csrf_token %}
+                        </form>
+
+                        <form id="form-update-{{ task.id }}" action="{% url 'tasks:detail' task_id=task.id %}"
+                              method="POST" class="d-none">
+                            {% csrf_token %}
+                            <input type="hidden" name="task_status" value="pending">
+                        </form>
                     {% endfor %}
                 {% endif %}
             </div>
