@@ -7,3 +7,10 @@ class TaskNewForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = 'name',
+
+
+class TaskForm(forms.ModelForm):
+
+    class Meta:
+        model = Task
+        fields = ('name', 'done')

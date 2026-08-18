@@ -29,10 +29,18 @@
                 {% if pending_tasks.exists %}
                     <h2>Pending Tasks</h2>
                     {% for task in pending_tasks %}
-                        <div class="input-group has-validation mb-sm-1">
-                            <input type="text" class="form-control" name="task_{{ task.id }}" value="{{ task.name }}"
-                                   aria-label="task" >
-                        </div>
+                        <form action="{% url 'tasks:detail' task_id=task.id %}" method="POST">
+                            {% csrf_token %}
+                            <!-- 1. Add this hidden input to send the 'done' status -->
+                            <input type="hidden" name="done" value="True">
+                            <div class="input-group has-validation mb-sm-1">
+                                <!-- 2. Change name="task_{{ task.id }}" to name="name" -->
+                                <input type="text" class="form-control" name="name"
+                                       value="{{ task.name }}"
+                                       aria-label="task">
+                                <button class="btn btn-success" type="submit" id="button-addon2">Mark as done</button>
+                            </div>
+                        </form>
                     {% endfor %}
                 {% endif %}
             </div>
