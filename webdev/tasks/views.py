@@ -15,15 +15,42 @@ def home(request):
             return HttpResponseRedirect(reverse('tasks:home'))
         else:
             pending_tasks = Task.objects.filter(done=False).all()
-            return render(request, 'tasks/home.html', {'form': form, 'pending_tasks': pending_tasks}, status=400)
+            done_tasks = Task.objects.filter(done=True).all()
+            return render(
+                request, 'tasks/home.html',
+                {
+                    'form': form,
+                    'pending_tasks': pending_tasks,
+                    'done_tasks': done_tasks,
+                 },
+                status=400
+            )
     pending_tasks = Task.objects.filter(done=False).all()
-    return render(request, 'tasks/home.html', {'pending_tasks': pending_tasks})
+    done_tasks = Task.objects.filter(done=True).all()
+    return render(
+        request,
+        'tasks/home.html',
+        {
+            'pending_tasks': pending_tasks,
+            'done_tasks': done_tasks,
+        }
+    )
 
 
 def detail(request, task_id):
     if request.method == 'POST':
         task = Task.objects.get(id=task_id)
-        form = TaskForm(request.POST, instance=task)
+
+        # 1. Create a mutable copy of the POST data
+        data = request.POST.copy()
+
+        # 2. Check the custom task_status flag we added to the HTML
+        task_status = data.get('task_status')
+        if task_status == 'complete':
+            data['done'] = 'True'
+
+        # 3. Pass the modified data to your TaskForm
+        form = TaskForm(data, instance=task)
         if form.is_valid():
             form.save()
     return HttpResponseRedirect(reverse('tasks:home'))
