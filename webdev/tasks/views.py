@@ -48,9 +48,17 @@ def detail(request, task_id):
         task_status = data.get('task_status')
         if task_status == 'complete':
             data['done'] = 'True'
+        elif task_status == 'pending':
+            data['done'] = 'False'
 
         # 3. Pass the modified data to your TaskForm
         form = TaskForm(data, instance=task)
         if form.is_valid():
             form.save()
+    return HttpResponseRedirect(reverse('tasks:home'))
+
+
+def erase(request, task_id):
+    if request.method == 'POST':
+        Task.objects.filter(id=task_id).delete()
     return HttpResponseRedirect(reverse('tasks:home'))

@@ -6,5 +6,6 @@ app_name = 'tasks'
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('<int:task_id>/', views.detail, name='detail'),
+    path('<int:task_id>', views.detail, name='detail'),
+    path('delete/<int:task_id>', views.erase, name='erase'),
 ]
